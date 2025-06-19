@@ -11,12 +11,10 @@ namespace University.Services.Services;
 public class StudentService : IStudentService
 {
     private readonly IStudentRepository _repository;
-    private readonly ProjectDbContext _context;
 
-    public StudentService(IStudentRepository repository, ProjectDbContext context)
+    public StudentService(IStudentRepository repository)
     {
         _repository = repository;
-        _context = context;
     }
 
     public async Task<IEnumerable<Student>> GetAll()
@@ -60,27 +58,15 @@ public class StudentService : IStudentService
 
     public async Task Delete(int id)
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        var student = await _repository.GetByIdWithSubjects(id)
+            ?? throw new DomainException("Estudiante no encontrado");
 
-        try
+        if (student.StudentSubjects?.Any() == true)
         {
-            var student = await _repository.GetByIdWithSubjects(id)
-                ?? throw new DomainException("Estudiante no encontrado");
-
-            if (student.StudentSubjects?.Any() == true)
-            {
-                await _repository.DeleteStudentSubjects(student.StudentSubjects);
-            }
-
-            await _repository.Delete(id);
-
-            await transaction.CommitAsync();
+            await _repository.DeleteStudentSubjects(student.StudentSubjects);
         }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+
+        await _repository.Delete(id);
     }
 
     public async Task<bool> Exists(int id)
