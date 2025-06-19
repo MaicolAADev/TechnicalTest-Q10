@@ -1,0 +1,14 @@
+﻿using University.Core.Entities;
+
+namespace University.Infraestructure.Interfaces;
+public interface IStudentRepository
+{
+    Task<Student> GetById(int id);
+    IQueryable<Student> GetAll();
+    Task Add(Student student);
+    Task Update(Student student);
+    Task Delete(int id);
+    Task<bool> Exists(int id);
+    Task<Student?> GetByEmail(string email);
+    Task<Student?> DocumentExist(string document);
+}
