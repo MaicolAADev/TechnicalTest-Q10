@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout 
       uses: actions/checkout@v4
 
     - name: Setup 
@@ -23,11 +23,11 @@ jobs:
     - name: Build and publish
       run: dotnet publish ./University.web/University.web.csproj -c Release -o publish
 
-    - name: Upload to FTP
+    - name: Publish prod
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/
-        server-dir: ${{ secrets.FTP_REMOTE_DIR }}
+        server-dir: ${{ secrets.FTP_REMOTE_DIR }}/
