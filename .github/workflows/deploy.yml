@@ -12,7 +12,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup .NET 8
+    - name: Setup 
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
@@ -29,5 +29,5 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./publish
+        local-dir: ./publish/
         server-dir: ${{ secrets.FTP_REMOTE_DIR }}
