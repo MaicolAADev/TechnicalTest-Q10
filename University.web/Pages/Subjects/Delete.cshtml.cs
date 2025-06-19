@@ -17,6 +17,9 @@ namespace University.Web.Pages.Subjects
         [BindProperty]
         public Subject Subject { get; set; }
 
+        [TempData]
+        public string ErrorMessage { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int id)
         {
             Subject = await _subjectService.GetById(id);
@@ -35,10 +38,15 @@ namespace University.Web.Pages.Subjects
                 TempData["SuccessMessage"] = "Materia eliminada exitosamente!";
                 return RedirectToPage("./Index");
             }
+            catch (DomainException ex)
+            {
+                ErrorMessage = ex.Message;
+                return RedirectToPage(new { id });
+            }
             catch (System.Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
-                return Page();
+                ErrorMessage = "Ocurrió un error inesperado al intentar eliminar la materia.";
+                return RedirectToPage(new { id });
             }
         }
     }

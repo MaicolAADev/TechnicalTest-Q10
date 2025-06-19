@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using University.Core.Entities;
 using University.Core.Utilities;
+using University.Infraestructure.Data;
 using University.Infraestructure.Interfaces;
 using University.Services.Interfaces;
 
@@ -10,10 +11,12 @@ namespace University.Services.Services;
 public class StudentService : IStudentService
 {
     private readonly IStudentRepository _repository;
+    private readonly ProjectDbContext _context;
 
-    public StudentService(IStudentRepository repository)
+    public StudentService(IStudentRepository repository, ProjectDbContext context)
     {
         _repository = repository;
+        _context = context;
     }
 
     public async Task<IEnumerable<Student>> GetAll()
@@ -57,10 +60,27 @@ public class StudentService : IStudentService
 
     public async Task Delete(int id)
     {
-        if (!await _repository.Exists(id))
-            throw new DomainException("Estudiante no encontrado");
+        using var transaction = await _context.Database.BeginTransactionAsync();
 
-        await _repository.Delete(id);
+        try
+        {
+            var student = await _repository.GetByIdWithSubjects(id)
+                ?? throw new DomainException("Estudiante no encontrado");
+
+            if (student.StudentSubjects?.Any() == true)
+            {
+                await _repository.DeleteStudentSubjects(student.StudentSubjects);
+            }
+
+            await _repository.Delete(id);
+
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<bool> Exists(int id)
@@ -99,11 +119,11 @@ public class StudentService : IStudentService
     private async Task ValidateUniqueConstraints(StudentDto student)
     {
        var existingStudentDoc = await _repository.DocumentExist(student.Document);
-    if (existingStudentDoc != null && existingStudentDoc.Id != student.Id)
-        throw new DomainException($"Ya existe un usuario con el documento: {student.Document}");
+        if (existingStudentDoc != null && existingStudentDoc.Id != student.Id)
+            throw new DomainException($"Ya existe un usuario con el documento: {student.Document}");
 
-    var existingStudentEmail = await _repository.GetByEmail(student.Email);
-    if (existingStudentEmail != null && existingStudentEmail.Id != student.Id)
-        throw new DomainException("El email ya está registrado");
+        var existingStudentEmail = await _repository.GetByEmail(student.Email);
+        if (existingStudentEmail != null && existingStudentEmail.Id != student.Id)
+            throw new DomainException("El email ya está registrado");
     }
 }

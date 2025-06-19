@@ -55,8 +55,15 @@ public class SubjectService : ISubjectService
 
     public async Task Delete(int id)
     {
-        if (!await _subjectRepository.Exists(id))
-            throw new DomainException("Materia no encontrada.");
+        var subject = await _subjectRepository.GetByIdWithEnrollments(id)
+            ?? throw new DomainException("Materia no encontrada");
+
+        if (subject.StudentSubjects?.Any() == true)
+        {
+            throw new DomainException(
+                $"No se puede eliminar la materia porque tiene {subject.StudentSubjects.Count} estudiantes matriculados. " +
+                "Desasocie todos los estudiantes primero.");
+        }
 
         await _subjectRepository.Delete(id);
     }

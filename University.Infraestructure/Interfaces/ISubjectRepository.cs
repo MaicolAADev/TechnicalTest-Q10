@@ -12,4 +12,5 @@ public interface ISubjectRepository
     Task Delete(int id);
     Task<bool> Exists(int id);
     IQueryable<Subject> GetAllQueryable();
+    Task<Subject> GetByIdWithEnrollments(int id);
 }

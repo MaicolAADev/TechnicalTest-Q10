@@ -63,4 +63,11 @@ public class SubjectRepository : ISubjectRepository
     {
         return await _context.Subjects.AnyAsync(e => e.Id == id);
     }
+
+    public async Task<Subject> GetByIdWithEnrollments(int id)
+    {
+        return await _context.Subjects
+            .Include(s => s.StudentSubjects)
+            .FirstOrDefaultAsync(s => s.Id == id);
+    }
 }

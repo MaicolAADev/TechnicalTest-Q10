@@ -1,0 +1,48 @@
+name: Build and Test .NET App
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Dependencies
+      run: dotnet restore
+
+    - name: Build project
+      run: dotnet build --no-restore --configuration Release
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: build  
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Dependencies
+      run: dotnet restore
+
+    - name: Run tests
+      run: dotnet test ./University.Tests/University.Tests.csproj --configuration Release --verbosity normal
+

@@ -58,4 +58,17 @@ public class StudentRepository : IStudentRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.Document == document);
     }
+
+    public async Task<Student> GetByIdWithSubjects(int id)
+    {
+        return await _context.Students
+            .Include(s => s.StudentSubjects)
+            .FirstOrDefaultAsync(s => s.Id == id);
+    }
+
+    public async Task DeleteStudentSubjects(ICollection<StudentSubject> studentSubjects)
+    {
+        _context.StudentSubjects.RemoveRange(studentSubjects);
+        await _context.SaveChangesAsync();
+    }
 }

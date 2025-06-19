@@ -11,4 +11,6 @@ public interface IStudentRepository
     Task<bool> Exists(int id);
     Task<Student?> GetByEmail(string email);
     Task<Student?> DocumentExist(string document);
+    Task<Student> GetByIdWithSubjects(int id);
+    Task DeleteStudentSubjects(ICollection<StudentSubject> studentSubjects);
 }
