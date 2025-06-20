@@ -22,7 +22,7 @@ public class StudentServiceTests
     public async Task GetById_ReturnsStudent_WhenStudentExists()
     {
         var studentId = 1;
-        var expectedStudent = new Student { Id = studentId, Name = "Test Student" };
+        var expectedStudent = new Student { Id = studentId, Name = "Maicol Arroyave" };
         _mockRepo.Setup(r => r.GetById(studentId)).ReturnsAsync(expectedStudent);
 
         var result = await _service.GetById(studentId);
@@ -33,7 +33,7 @@ public class StudentServiceTests
     [Fact]
     public async Task Create_ThrowsException_WhenEmailExists()
     {
-        var studentDto = new StudentDto(0, "Test Student", "123456", "test@email.com");
+        var studentDto = new StudentDto(0, "Maicol Arroyave", "103938", "maicolaroyave10@mail.com");
 
         _mockRepo.Setup(r => r.GetByEmail(studentDto.Email))
                  .ReturnsAsync(new Student { Id = 999 });
@@ -45,7 +45,7 @@ public class StudentServiceTests
     [Fact]
     public async Task Update_UpdatesStudent_WhenValidData()
     {
-        var studentDto = new StudentDto(1, "Updated Student", "123456", "updated@email.com");
+        var studentDto = new StudentDto(1, "Maicol Arroyavel Alvarez", "10393889", "maicolaroyave10@gmail.com");
         var existingStudent = new Student { Id = 1 };
 
         _mockRepo.Setup(r => r.GetById(studentDto.Id)).ReturnsAsync(existingStudent);
