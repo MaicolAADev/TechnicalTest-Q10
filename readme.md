@@ -1,6 +1,7 @@
 ## Prueba técnica sistema de creación de materias, estudiantes e inscripciones de estudiantes a las materias - ASP.NET Core MVC
 
 #### Despliegue dockerizado y montado sobre imagen de ubuntu en plataforma render, url de acceso público
+- URL despliegue: https://technicaltest-q10-kr4r.onrender.com/
 - URL despliegue: https://technicaltest-q10.onrender.com/
 
 ###  Objetivo
